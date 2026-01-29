@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch Grammatik: Bewegungsverben</title>
+    <!-- Polyfill für Touch-Geräte (Drag & Drop) -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --secondary-color: #e8eaf6;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Einführung Box */
+        .intro-box {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .grammar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        .grammar-table th, .grammar-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .grammar-table th {
+            background-color: #e0e0e0;
+        }
+
+        /* Aufgaben Styling */
+        .task-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin: 0 5px;
+        }
+
+        input.correct, select.correct {
+            border-color: var(--success-color);
+            background-color: #e8f5e9;
+        }
+
+        input.wrong, select.wrong {
+            border-color: var(--error-color);
+            background-color: #ffebee;
+        }
+
+        /* Buttons */
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-check {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-reset {
+            background-color: #9e9e9e;
+            color: white;
+        }
+
+        .btn-solve {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        /* Drag and Drop Specifics */
+        .draggable-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .draggable {
+            background: #fff;
+            border: 2px solid var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: grab;
+        }
+
+        .dropzones {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .dropzone {
+            flex: 1;
+            border: 2px dashed #aaa;
+            padding: 10px;
+            min-height: 100px;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+
+        .dropzone h4 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .dropzones {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik: Bewegungsverben</h1>
+
+    <!-- Einführung -->
+    <div class="intro-box">
+        <h2>Grundlagen: Bewegungsverben mit Präfixen</h2>
+        <p>Im Russischen unterscheiden wir zunächst, wie die Bewegung stattfindet:</p>
+        <ul>
+            <li><strong>идти</strong> (zu Fuß gehen)</li>
+            <li><strong>ехать</strong> (mit einem Fahrzeug fahren)</li>
+        </ul>
+        <p>Durch Präfixe ändern wir die Bedeutung (Aspekt):</p>
+        <table class="grammar-table">
+            <thead>
+                <tr>
+                    <th>Präfix</th>
+                    <th>Bedeutung</th>
+                    <th>Zu Fuß</th>
+                    <th>Fahren</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>(kein Präfix)</td>
+                    <td>Prozess (gerade jetzt) oder allgemein</td>
+                    <td>идти</td>
+                    <td>ехать</td>
+                </tr>
+                <tr>
+                    <td><strong>по-</strong></td>
+                    <td>Start der Bewegung / Absicht (Zukunft)</td>
+                    <td>пойти</td>
+                    <td>поехать</td>
+                </tr>
+                <tr>
+                    <td><strong>при-</strong></td>
+                    <td>Ankunft / Ergebnis (schon da sein)</td>
+                    <td>прийти</td>
+                    <td>приехать</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Aufgabe 1: Radio Buttons -->
+    <div class="task-card" id="task1">
+        <div class="task-title">1. Zu Fuß oder Fahren? Wähle das richtige Basisverb.</div>
+        <div class="question">
+            <p>Я ... в парк (Ich gehe zu Fuß).</p>
+            <label><input type="radio" name="t1_q1" value="идти"> иду</label>
+            <label><input type="radio" name="t1_q1" value="ехать"> еду</label>
+        </div>
+        <div class="question">
+            <p>Мы ... на машине (Wir fahren mit dem Auto).</p>
+            <label><input type="radio" name="t1_q2" value="идти"> идем</label>
+            <label><input type="radio" name="t1_q2" value="ехать"> едем</label>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask1()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask1()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask1()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb1"></div>
+    </div>
+
+    <!-- Aufgabe 2: Dropdown -->
+    <div class="task-card" id="task2">
+        <div class="task-title">2. Start (по-) oder Ankunft (при-)? Wähle das richtige Präfix.</div>
+        <div class="question">
+            <p>Morgen werde ich ins Kino gehen. (Start/Zukunft)</p>
+            Завтра я 
+            <select id="t2_q1">
+                <option value="">...</option>
+                <option value="по">по</option>
+                <option value="при">при</option>
+            </select>йду в кино.
+        </div>
+        <div class="question">
+            <p>Er ist schon zu Hause angekommen. (Ergebnis)</p>
+            Он уже 
+            <select id="t2_q2">
+                <option value="">...</option>
+                <option value="по">по</option>
+                <option value="при">при</option>
+            </select>шел домой.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask2()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask2()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask2()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb2"></div>
+    </div>
+
+    <!-- Aufgabe 3: Lückentext Textfeld -->
+    <div class="task-card" id="task3">
+        <div class="task-title">3. Futur mit по-. Ergänze das Verb.</div>
+        <p>Setze die richtige Form von <strong>пойти</strong> oder <strong>поехать</strong> ein.</p>
+        <div class="question">
+            Завтра мы (werden fahren) <input type="text" id="t3_q1" data-answer="поедем"> в Берлин.
+        </div>
+        <div class="question">
+            Я (werde gehen) <input type="text" id="t3_q2" data-answer="пойду"> в магазин через час.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask3()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask3()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask3()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb3"></div>
+    </div>
+
+    <!-- Aufgabe 4: Drag and Drop -->
+    <div class="task-card" id="task4">
+        <div class="task-title">4. Sortiere die Verben: Start vs. Ankunft</div>
+        <p>Ziehe die Verben in die richtige Box.</p>
+        <div class="draggable-container">
+            <div class="draggable" draggable="true" id="d1" data-group="start">поехать</div>
+            <div class="draggable" draggable="true" id="d2" data-group="arrival">прийти</div>
+            <div class="draggable" draggable="true" id="d3" data-group="start">пойти</div>
+            <div class="draggable" draggable="true" id="d4" data-group="arrival">приехать</div>
+        </div>
+        <div class="dropzones">
+            <div class="dropzone" id="zone-start" data-accept="start">
+                <h4>Start / Losgehen (по-)</h4>
+            </div>
+            <div class="dropzone" id="zone-arrival" data-accept="arrival">
+                <h4>Ankunft (при-)</h4>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask4()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask4()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask4()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb4"></div>
+    </div>
+
+    <!-- Aufgabe 5: Multiple Choice -->
+    <div class="task-card" id="task5">
+        <div class="task-title">5. Welches Verb passt zum Kontext?</div>
+        <div class="question">
+            <p>Kontext: "Wo ist Anna?" - "Sie ist ..." (Sie ist weggegangen, aber wir wissen nicht, ob sie da ist).</p>
+            <select id="t5_q1">
+                <option value="">Wähle...</option>
+                <option value="пришла">пришла</option>
+                <option value="пошла">пошла</option>
+                <option value="шла">шла</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask5()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask5()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask5()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb5"></div>
+    </div>
+
+    <!-- Aufgabe 6: Lückentext -->
+    <div class="task-card" id="task6">
+        <div class="task-title">6. Gegenwart vs. Zukunft</div>
+        <div class="question">
+            Сейчас я (gehe) <input type="text" id="t6_q1" data-answer="иду"> на работу.
+        </div>
+        <div class="question">
+            Завтра я (werde gehen) <input type="text" id="t6_q2" data-answer="пойду"> на работу.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask6()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask6()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask6()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb6"></div>
+    </div>
+
+    <!-- Aufgabe 7: Auswahl Transportmittel -->
+    <div class="task-card" id="task7">
+        <div class="task-title">7. Transportmittel erkennen</div>
+        <p>Wähle <strong>ехать/поехать</strong> wenn ein Fahrzeug im Spiel ist.</p>
+        <div class="question">
+            Мама ... на автобусе.
+            <label><input type="radio" name="t7_q1" value="correct"> едет</label>
+            <label><input type="radio" name="t7_q1" value="wrong"> идет</label>
+        </div>
+        <div class="question">
+            Дети ... в школу пешком.
+            <label><input type="radio" name="t7_q2" value="wrong"> едут</label>
+            <label><input type="radio" name="t7_q2" value="correct"> идут</label>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask7()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask7()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask7()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb7"></div>
+    </div>
+
+    <!-- Aufgabe 8: Textfeld Konjugation Ankunft -->
+    <div class="task-card" id="task8">
+        <div class="task-title">8. Konjugation: Ankommen (Vergangenheit)</div>
+        <p>Ergänze die richtige Form (Geschlecht beachten!).</p>
+        <div class="question">
+            (Mascha - sie) Маша уже <input type="text" id="t8_q1" data-answer="пришла"> домой.
+        </div>
+        <div class="question">
+            (Ivan - er) Иван уже <input type="text" id="t8_q2" data-answer="приехал"> на такси.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask8()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask8()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask8()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb8"></div>
+    </div>
+
+    <!-- Aufgabe 9: Verneinung -->
+    <div class="task-card" id="task9">
+        <div class="task-title">9. Verneinung und Zukunft</div>
+        <div class="question">
+            <p>Ich will nicht gehen. Ich werde nicht ins Kino gehen.</p>
+            Я не хочу идти. Я не <input type="text" id="t9_q1" data-answer="пойду"> в кино.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask9()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask9()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask9()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb9"></div>
+    </div>
+
+    <!-- Aufgabe 10: Dialog ergänzen -->
+    <div class="task-card" id="task10">
+        <div class="task-title">10. Dialog ergänzen</div>
+        <div class="question">
+            - Wo bist du?<br>
+            - Ich sitze im Bus. Ich ... (fahre) zur Uni.<br>
+            <select id="t10_q1">
+                <option value="">...</option>
+                <option value="еду">еду</option>
+                <option value="иду">иду</option>
+                <option value="поеду">поеду</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask10()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask10()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask10()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb10"></div>
+    </div>
+
+    <!-- Aufgabe 11: Plural -->
+    <div class="task-card" id="task11">
+        <div class="task-title">11. Pluralformen</div>
+        <p>Wir (sind angekommen) zu Fuß.</p>
+        <div class="question">
+            Мы <input type="text" id="t11_q1" data-answer="пришли"> пешком.
+        </div>
+        <p>Sie (werden fahren) nach Moskau.</p>
+        <div class="question">
+            Они <input type="text" id="t11_q2" data-answer="поедут"> в Москву.
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask11()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask11()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask11()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb11"></div>
+    </div>
+
+    <!-- Aufgabe 12: Übersetzung -->
+    <div class="task-card" id="task12">
+        <div class="task-title">12. Übersetzung (Schreibe das russische Wort)</div>
+        <div class="question">
+            "Ankommen" (mit dem Auto, Infinitiv): <input type="text" id="t12_q1" data-answer="приехать">
+        </div>
+        <div class="question">
+            "Losgehen" (zu Fuß, Infinitiv): <input type="text" id="t12_q2" data-answer="пойти">
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkTask12()">Überprüfen</button>
+            <button class="btn-reset" onclick="resetTask12()">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveTask12()">Lösung anzeigen</button>
+        </div>
+        <div class="feedback-msg" id="fb12"></div>
+    </div>
+
+</div>
+
+<script>
+    /* --- Allgemeine Hilfsfunktionen --- */
+    function setFeedback(elementId, message, type) {
+        const el = document.getElementById(elementId);
+        el.textContent = message;
+        el.style.color = type === 'success' ? 'var(--success-color)' : 'var(--error-color)';
+    }
+
+    function clearInputStyles(containerId) {
+        const container = document.getElementById(containerId);
+        const inputs = container.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.classList.remove('correct', 'wrong');
+            if(input.type === 'text' || input.tagName === 'SELECT') {
+                input.value = '';
+            }
+            if(input.type === 'radio') {
+                input.checked = false;
+            }
+        });
+        const feedback = container.querySelector('.feedback-msg');
+        if(feedback) feedback.textContent = '';
+    }
+
+    function checkTextInput(id) {
+        const input = document.getElementById(id);
+        const val = input.value.trim().toLowerCase();
+        const correctVal = input.getAttribute('data-answer').toLowerCase();
+        
+        if (val === correctVal) {
+            input.classList.add('correct');
+            input.classList.remove('wrong');
+            return true;
+        } else {
+            input.classList.add('wrong');
+            input.classList.remove('correct');
+            return false;
+        }
+    }
+
+    /* --- Aufgabe 1 (Radio) --- */
+    function checkTask1() {
+        let score = 0;
+        const q1 = document.querySelector('input[name="t1_q1"]:checked');
+        const q2 = document.querySelector('input[name="t1_q2"]:checked');
+
+        if (q1 && q1.value === 'идти') score++;
+        if (q2 && q2.value === 'ехать') score++;
+
+        if (score === 2) {
+            setFeedback('fb1', 'Richtig! "Zu Fuß" = идти, "Fahren" = ехать.', 'success');
+        } else {
+            setFeedback('fb1', 'Leider nicht ganz richtig. Versuch es noch einmal.', 'error');
+        }
+    }
+    function resetTask1() { clearInputStyles('task1'); }
+    function solveTask1() {
+        document.querySelector('input[name="t1_q1"][value="идти"]').checked = true;
+        document.querySelector('input[name="t1_q2"][value="ехать"]').checked = true;
+        setFeedback('fb1', 'Lösung angezeigt.', 'success');
+    }
+
+    /* --- Aufgabe 2 (Select) --- */
+    function checkTask2() {
+        const s1 = document.getElementById('t2_q1');
+        const s2 = document.getElementById('t2_q2');
+        let correct = true;
+
+        if (s1.value === 'по') { s1.classList.add('correct'); s1.classList.remove('wrong'); }
+        else { s1.classList.add('wrong'); s1.classList.remove('correct'); correct = false; }
+
+        if (s2.value === 'при') { s2.classList.add('correct'); s2.classList.remove('wrong'); }
+        else { s2.classList.add('wrong'); s2.classList.remove('correct'); correct = false; }
+
+        if (correct) setFeedback('fb2', 'Super! по- für Start/Zukunft, при- für Ergebnis.', 'success');
+        else setFeedback('fb2', 'Überprüfe deine Auswahl.', 'error');
+    }
+    function resetTask2() { clearInputStyles('task2'); }
+    function solveTask2() {
+        document.getElementById('t2_q1').value = 'по';
+        document.getElementById('t2_q2').value = 'при';
+        setFeedback('fb2', '', 'success');
+    }
+
+    /* --- Aufgabe 3 (Text Input) --- */
+    function checkTask3() {
+        const r1 = checkTextInput('t3_q1');
+        const r2 = checkTextInput('t3_q2');
+        if (r1 && r2) setFeedback('fb3', 'Ausgezeichnet!', 'success');
+        else setFeedback('fb3', 'Achte auf die Konjugation.', 'error');
+    }
+    function resetTask3() { clearInputStyles('task3'); }
+    function solveTask3() {
+        document.getElementById('t3_q1').value = 'поедем';
+        document.getElementById('t3_q2').value = 'пойду';
+        setFeedback('fb3', '', 'success');
+    }
+
+    /* --- Aufgabe 4 (Drag & Drop) --- */
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzones = document.querySelectorAll('.dropzone');
+    const originalParent = document.querySelector('.draggable-container');
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', () => {
+            draggable.classList.add('dragging');
+        });
+        draggable.addEventListener('dragend', () => {
+            draggable.classList.remove('dragging');
+        });
+    });
+
+    dropzones.forEach(zone => {
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            const draggable = document.querySelector('.dragging');
+            zone.appendChild(draggable);
+        });
+    });
+
+    // Reset items to original container for DnD
+    originalParent.addEventListener('dragover', e => {
+        e.preventDefault();
+        const draggable = document.querySelector('.dragging');
+        originalParent.appendChild(draggable);
+    });
+
+    function checkTask4() {
+        let correctCount = 0;
+        draggables.forEach(item => {
+            const parent = item.parentElement;
+            if (parent.classList.contains('dropzone')) {
+                if (parent.dataset.accept === item.dataset.group) {
+                    item.style.borderColor = 'var(--success-color)';
+                    item.style.backgroundColor = '#e8f5e9';
+                    correctCount++;
+                } else {
+                    item.style.borderColor = 'var(--error-color)';
+                    item.style.backgroundColor = '#ffebee';
+                }
+            } else {
+                 item.style.borderColor = 'var(--error-color)'; // Not moved yet
+            }
+        });
+
+        if (correctCount === 4) setFeedback('fb4', 'Alles richtig sortiert!', 'success');
+        else setFeedback('fb4', 'Einige Verben sind nicht in der richtigen Box.', 'error');
+    }
+
+    function resetTask4() {
+        draggables.forEach(item => {
+            originalParent.appendChild(item);
+            item.style.borderColor = 'var(--primary-color)';
+            item.style.backgroundColor = '#fff';
+        });
+        setFeedback('fb4', '', 'success');
+    }
+
+    function solveTask4() {
+        draggables.forEach(item => {
+            if (item.dataset.group === 'start') {
+                document.getElementById('zone-start').appendChild(item);
+            } else {
+                document.getElementById('zone-arrival').appendChild(item);
+            }
+            item.style.borderColor = 'var(--success-color)';
+        });
+        setFeedback('fb4', 'Lösung angezeigt.', 'success');
+    }
+
+    /* --- Aufgabe 5 (Select) --- */
+    function checkTask5() {
+        const val = document.getElementById('t5_q1').value;
+        if (val === 'пошла') {
+            setFeedback('fb5', 'Richtig! Sie ist losgegangen (Start der Handlung).', 'success');
+            document.getElementById('t5_q1').classList.add('correct');
+        } else {
+            setFeedback('fb5', 'Falsch. Wir wissen nicht, ob sie da ist (also nicht при-).', 'error');
+            document.getElementById('t5_q1').classList.add('wrong');
+        }
+    }
+    function resetTask5() { clearInputStyles('task5'); }
+    function solveTask5() { document.getElementById('t5_q1').value = 'пошла'; setFeedback('fb5', '', 'success'); }
+
+    /* --- Aufgabe 6 (Input) --- */
+    function checkTask6() {
+        const r1 = checkTextInput('t6_q1');
+        const r2 = checkTextInput('t6_q2');
+        if (r1 && r2) setFeedback('fb6', 'Richtig!', 'success');
+        else setFeedback('fb6', 'Prüfe: Jetzt (Prozess) vs. Morgen (Zukunft/Start).', 'error');
+    }
+    function resetTask6() { clearInputStyles('task6'); }
+    function solveTask6() {
+        document.getElementById('t6_q1').value = 'иду';
+        document.getElementById('t6_q2').value = 'пойду';
+        setFeedback('fb6', '', 'success');
+    }
+
+    /* --- Aufgabe 7 (Radio) --- */
+    function checkTask7() {
+        let score = 0;
+        const q1 = document.querySelector('input[name="t7_q1"]:checked');
+        const q2 = document.querySelector('input[name="t7_q2"]:checked');
+
+        if (q1 && q1.value === 'correct') score++;
+        if (q2 && q2.value === 'correct') score++;
+
+        if (score === 2) setFeedback('fb7', 'Perfekt!', 'success');
+        else setFeedback('fb7', 'Bus = Fahren, Fuß = Gehen.', 'error');
+    }
+    function resetTask7() { clearInputStyles('task7'); }
+    function solveTask7() {
+        const r1 = document.querySelectorAll('input[name="t7_q1"]');
+        r1.forEach(r => { if(r.value==='correct') r.checked = true; });
+        const r2 = document.querySelectorAll('input[name="t7_q2"]');
+        r2.forEach(r => { if(r.value==='correct') r.checked = true; });
+        setFeedback('fb7', '', 'success');
+    }
+
+    /* --- Aufgabe 8 (Input) --- */
+    function checkTask8() {
+        const r1 = checkTextInput('t8_q1');
+        const r2 = checkTextInput('t8_q2');
+        if(r1 && r2) setFeedback('fb8', 'Sehr gut! Geschlecht beachtet.', 'success');
+        else setFeedback('fb8', 'Achte auf weiblich (а) und männlich (Nullendung).', 'error');
+    }
+    function resetTask8() { clearInputStyles('task8'); }
+    function solveTask8() {
+        document.getElementById('t8_q1').value = 'пришла';
+        document.getElementById('t8_q2').value = 'приехал';
+        setFeedback('fb8', '', 'success');
+    }
+
+    /* --- Aufgabe 9 (Input) --- */
+    function checkTask9() {
+        if(checkTextInput('t9_q1')) setFeedback('fb9', 'Korrekt.', 'success');
+        else setFeedback('fb9', 'Falsch.', 'error');
+    }
+    function resetTask9() { clearInputStyles('task9'); }
+    function solveTask9() { document.getElementById('t9_q1').value = 'пойду'; setFeedback('fb9', '', 'success'); }
+
+    /* --- Aufgabe 10 (Select) --- */
+    function checkTask10() {
+        const el = document.getElementById('t10_q1');
+        if (el.value === 'еду') {
+            el.classList.add('correct'); el.classList.remove('wrong');
+            setFeedback('fb10', 'Richtig. Er sitzt jetzt im Bus (Prozess).', 'success');
+        } else {
+            el.classList.add('wrong'); el.classList.remove('correct');
+            setFeedback('fb10', 'Falsch.', 'error');
+        }
+    }
+    function resetTask10() { clearInputStyles('task10'); }
+    function solveTask10() { document.getElementById('t10_q1').value = 'еду'; setFeedback('fb10', '', 'success'); }
+
+    /* --- Aufgabe 11 (Input) --- */
+    function checkTask11() {
+        const r1 = checkTextInput('t11_q1');
+        const r2 = checkTextInput('t11_q2');
+        if(r1 && r2) setFeedback('fb11', 'Richtig!', 'success');
+        else setFeedback('fb11', 'Achte auf die Pluralendungen.', 'error');
+    }
+    function resetTask11() { clearInputStyles('task11'); }
+    function solveTask11() {
+        document.getElementById('t11_q1').value = 'пришли';
+        document.getElementById('t11_q2').value = 'поедут';
+        setFeedback('fb11', '', 'success');
+    }
+
+    /* --- Aufgabe 12 (Input) --- */
+    function checkTask12() {
+        const r1 = checkTextInput('t12_q1');
+        const r2 = checkTextInput('t12_q2');
+        if(r1 && r2) setFeedback('fb12', 'Perfekt übersetzt.', 'success');
+        else setFeedback('fb12', 'Bitte infinitiv verwenden.', 'error');
+    }
+    function resetTask12() { clearInputStyles('task12'); }
+    function solveTask12() {
+        document.getElementById('t12_q1').value = 'приехать';
+        document.getElementById('t12_q2').value = 'пойти';
+        setFeedback('fb12', '', 'success');
+    }
+
+</script>
+
+</body>
+</html>
