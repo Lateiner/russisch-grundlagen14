@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Konjugation (Lückentext)</title>
+    <style>
+        :root {
+            --primary: #673ab7; /* Deep Purple */
+            --bg: #f3e5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --success: #4caf50;
+            --error: #f44336;
+            --input-border: #9e9e9e;
+            --focus: #9575cd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        h1 { color: var(--primary); margin: 0 0 10px 0; }
+        
+        .instructions {
+            background-color: #ede7f6;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #4527a0;
+            margin-bottom: 25px;
+        }
+
+        /* --- Sätze Liste --- */
+        .sentence-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sentence-item {
+            margin-bottom: 20px;
+            font-size: 1.15rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .index {
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 25px;
+        }
+
+        .cloze-input {
+            border: none;
+            border-bottom: 2px solid var(--input-border);
+            background: transparent;
+            font-size: 1.15rem;
+            font-family: inherit;
+            color: #000;
+            width: 140px;
+            text-align: center;
+            padding: 0 5px;
+            outline: none;
+            transition: border-color 0.3s, background-color 0.3s;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .cloze-input:focus {
+            border-bottom-color: var(--primary);
+            background-color: #f3e5f5;
+        }
+
+        /* Feedback Styles */
+        .cloze-input.correct {
+            border-bottom-color: var(--success);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .cloze-input.wrong {
+            border-bottom-color: var(--error);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .hint-text {
+            font-size: 0.9rem;
+            color: #757575;
+            font-style: italic;
+        }
+
+        /* --- Buttons --- */
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #78909c; }
+        .btn-solve { background-color: #ff9800; }
+        
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        button:active { transform: translateY(0); }
+
+        .feedback-message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+
+        /* Mobile Optimierung */
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .sentence-item { font-size: 1rem; line-height: 2; }
+            .cloze-input { width: 100px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Formenbildung: Lückentext</h1>
+        <div class="instructions">
+            Konjugiere das Verb in Klammern passend zum Subjekt. Achte auf die Zeitform (Zukunft oder Vergangenheit) und das Geschlecht.<br>
+            <em>Hinweis: "е" und "ё" werden beide als richtig akzeptiert.</em>
+        </div>
+    </header>
+
+    <ul class="sentence-list">
+        
+        <!-- Satz 1: Zukunft, Plural -->
+        <li class="sentence-item">
+            <span class="index">1.</span>
+            <span>Завтра мы</span>
+            <span class="hint-text">(поехать)</span>
+            <input type="text" class="cloze-input" data-answer="поедем" autocomplete="off">
+            <span>в Берлин.</span>
+        </li>
+
+        <!-- Satz 2: Vergangenheit, Männlich -->
+        <li class="sentence-item">
+            <span class="index">2.</span>
+            <span>Вчера Антон поздно</span>
+            <span class="hint-text">(прийти)</span>
+            <input type="text" class="cloze-input" data-answer="пришёл" autocomplete="off">
+            <span>домой.</span>
+        </li>
+
+        <!-- Satz 3: Vergangenheit, Weiblich -->
+        <li class="sentence-item">
+            <span class="index">3.</span>
+            <span>Анна уже</span>
+            <span class="hint-text">(пойти)</span>
+            <input type="text" class="cloze-input" data-answer="пошла" autocomplete="off">
+            <span>в магазин.</span>
+        </li>
+
+        <!-- Satz 4: Zukunft, Singular (Ich) -->
+        <li class="sentence-item">
+            <span class="index">4.</span>
+            <span>Я</span>
+            <span class="hint-text">(прийти)</span>
+            <input type="text" class="cloze-input" data-answer="приду" autocomplete="off">
+            <span>к тебе в пять часов.</span>
+        </li>
+
+        <!-- Satz 5: Vergangenheit, Plural -->
+        <li class="sentence-item">
+            <span class="index">5.</span>
+            <span>Родители уже</span>
+            <span class="hint-text">(приехать)</span>
+            <input type="text" class="cloze-input" data-answer="приехали" autocomplete="off">
+            <span>из отпуска.</span>
+        </li>
+
+        <!-- Satz 6: Zukunft, Singular (Du) -->
+        <li class="sentence-item">
+            <span class="index">6.</span>
+            <span>Ты</span>
+            <span class="hint-text">(поехать)</span>
+            <input type="text" class="cloze-input" data-answer="поедешь" autocomplete="off">
+            <span>с нами на море?</span>
+        </li>
+
+        <!-- Satz 7: Vergangenheit, Plural -->
+        <li class="sentence-item">
+            <span class="index">7.</span>
+            <span>Мы</span>
+            <span class="hint-text">(пойти)</span>
+            <input type="text" class="cloze-input" data-answer="пошли" autocomplete="off">
+            <span>в кино пешком.</span>
+        </li>
+
+        <!-- Satz 8: Vergangenheit, Neutrum -->
+        <li class="sentence-item">
+            <span class="index">8.</span>
+            <span>Такси быстро</span>
+            <span class="hint-text">(приехать)</span>
+            <input type="text" class="cloze-input" data-answer="приехало" autocomplete="off">
+            <span>.</span>
+        </li>
+
+        <!-- Satz 9: Zukunft, Höflichkeitsform -->
+        <li class="sentence-item">
+            <span class="index">9.</span>
+            <span>Вы</span>
+            <span class="hint-text">(прийти)</span>
+            <input type="text" class="cloze-input" data-answer="придёте" autocomplete="off">
+            <span>на собрание?</span>
+        </li>
+
+        <!-- Satz 10: Vergangenheit, Weiblich -->
+        <li class="sentence-item">
+            <span class="index">10.</span>
+            <span>Маша</span>
+            <span class="hint-text">(приехать)</span>
+            <input type="text" class="cloze-input" data-answer="приехала" autocomplete="off">
+            <span>на автобусе.</span>
+        </li>
+
+    </ul>
+
+    <div class="feedback-message" id="feedback"></div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetTask()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="solveTask()">Lösung anzeigen</button>
+    </div>
+
+</div>
+
+<script>
+    function normalizeText(text) {
+        // Entfernt Leerzeichen, macht alles klein und ersetzt ё durch е für den Vergleich
+        return text.trim().toLowerCase().replace(/ё/g, 'е');
+    }
+
+    function checkAnswers() {
+        const inputs = document.querySelectorAll('.cloze-input');
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        inputs.forEach(input => {
+            const userAnswer = normalizeText(input.value);
+            const correctAnswer = normalizeText(input.dataset.answer);
+            
+            // Vorherige Klassen entfernen
+            input.classList.remove('correct', 'wrong');
+
+            if (input.value.trim() !== "") {
+                answeredCount++;
+                if (userAnswer === correctAnswer) {
+                    input.classList.add('correct');
+                    correctCount++;
+                } else {
+                    input.classList.add('wrong');
+                }
+            }
+        });
+
+        const feedback = document.getElementById('feedback');
+        if (answeredCount === 0) {
+            feedback.textContent = "Bitte fülle die Lücken aus.";
+            feedback.style.color = "#f57c00";
+        } else if (correctCount === inputs.length) {
+            feedback.textContent = "Perfekt! Alle Formen sind richtig.";
+            feedback.style.color = "var(--success)";
+        } else {
+            feedback.textContent = `Du hast ${correctCount} von ${inputs.length} richtig.`;
+            feedback.style.color = "var(--error)";
+        }
+    }
+
+    function resetTask() {
+        const inputs = document.querySelectorAll('.cloze-input');
+        inputs.forEach(input => {
+            input.value = "";
+            input.classList.remove('correct', 'wrong');
+        });
+        document.getElementById('feedback').textContent = "";
+    }
+
+    function solveTask() {
+        const inputs = document.querySelectorAll('.cloze-input');
+        inputs.forEach(input => {
+            input.value = input.dataset.answer;
+            input.classList.remove('wrong');
+            input.classList.add('correct');
+        });
+        document.getElementById('feedback').textContent = "Lösungen eingetragen.";
+        document.getElementById('feedback').style.color = "var(--primary)";
+    }
+</script>
+
+</body>
+</html>
