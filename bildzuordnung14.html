@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Fuß vs. Fahrzeug</title>
+    <!-- WICHTIG: Polyfill für Touch-Geräte (ermöglicht Drag & Drop auf Handys) -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #3f51b5;
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --success: #d4edda;
+            --success-border: #28a745;
+            --error: #f8d7da;
+            --error-border: #dc3545;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0; /* Padding im Container geregelt */
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 { color: var(--primary); margin: 0 0 10px 0; }
+        p { margin: 0; color: #666; }
+
+        /* --- Sticky Wort-Bank --- */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg); /* Hintergrund damit Inhalt nicht durchscheint */
+            padding-bottom: 15px;
+            padding-top: 10px;
+            box-shadow: 0 4px 6px -6px rgba(0,0,0,0.2); /* Dezent, nur unten */
+        }
+
+        .word-bank {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            min-height: 50px;
+        }
+
+        .draggable {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: grab;
+            font-weight: bold;
+            font-size: 1.1rem;
+            user-select: none;
+            transition: transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+
+        .draggable.correct {
+            background-color: var(--success-border);
+            cursor: default;
+        }
+
+        .draggable.wrong {
+            background-color: var(--error-border);
+        }
+
+        /* --- Grid für die 8 Aufgaben --- */
+        .task-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+            /* Default Desktop: 4 Spalten */
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .task-card.drag-over {
+            border-color: var(--primary);
+            background-color: #e8eaf6;
+        }
+
+        .emoji-display {
+            font-size: 4rem; /* Große Emojis */
+            line-height: 1.2;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+        }
+
+        .drop-zone {
+            width: 100%;
+            height: 50px;
+            background-color: #f8f9fa;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .drop-zone-text {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            pointer-events: none;
+        }
+
+        /* Feedback Farben für die Zone */
+        .task-card.correct-zone {
+            background-color: var(--success);
+            border-color: var(--success-border);
+        }
+        
+        .task-card.wrong-zone {
+            background-color: var(--error);
+            border-color: var(--error-border);
+        }
+
+        /* --- Buttons --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: auto;
+            padding-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-check { background-color: var(--success-border); color: white; }
+        .btn-reset { background-color: #718096; color: white; }
+        .btn-solve { background-color: #ed8936; color: white; }
+
+        button:hover { opacity: 0.9; }
+
+        /* --- Media Queries für Responsivität --- */
+        
+        /* Tablet: 2 Spalten, Emojis etwas kleiner */
+        @media (max-width: 900px) {
+            .task-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Kleines Tablet / Großes Handy */
+        @media (max-width: 650px) {
+            .task-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 nebeneinander ist effizienter als 1 */
+            }
+            .emoji-display {
+                font-size: 3rem;
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+
+        /* Sehr kleines Handy */
+        @media (max-width: 350px) {
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+            .word-bank {
+                padding: 10px;
+                gap: 5px;
+            }
+            .draggable {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>Übung: Fuß oder Fahrzeug?</h2>
+        <p>Ziehe das passende Verb auf das Bild.</p>
+    </header>
+
+    <!-- Sticky Container für die Wörter -->
+    <div class="sticky-wrapper">
+        <div class="word-bank" id="wordBank">
+            <!-- 4x gehen, 4x fahren (gemischt) -->
+            <div class="draggable" draggable="true" data-verb="ехать">ехать</div>
+            <div class="draggable" draggable="true" data-verb="идти">идти</div>
+            <div class="draggable" draggable="true" data-verb="ехать">ехать</div>
+            <div class="draggable" draggable="true" data-verb="идти">идти</div>
+            <div class="draggable" draggable="true" data-verb="идти">идти</div>
+            <div class="draggable" draggable="true" data-verb="ехать">ехать</div>
+            <div class="draggable" draggable="true" data-verb="идти">идти</div>
+            <div class="draggable" draggable="true" data-verb="ехать">ехать</div>
+        </div>
+    </div>
+
+    <!-- Das Grid mit 8 Bildern -->
+    <div class="task-grid">
+        
+        <!-- Item 1: Auto -->
+        <div class="task-card" data-correct="ехать">
+            <div class="emoji-display">🚗</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 2: Fußgänger -->
+        <div class="task-card" data-correct="идти">
+            <div class="emoji-display">🚶‍♂️</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 3: Bus -->
+        <div class="task-card" data-correct="ехать">
+            <div class="emoji-display">🚌</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 4: Jogger -->
+        <div class="task-card" data-correct="идти">
+            <div class="emoji-display">🏃‍♀️</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 5: U-Bahn -->
+        <div class="task-card" data-correct="ехать">
+            <div class="emoji-display">🚇</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 6: Wanderer -->
+        <div class="task-card" data-correct="идти">
+            <div class="emoji-display">🎒</div> <!-- Rucksack/Wandern -->
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 7: Fahrrad (Wichtig: fahren!) -->
+        <div class="task-card" data-correct="ехать">
+            <div class="emoji-display">🚲</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+        <!-- Item 8: Familie spaziert -->
+        <div class="task-card" data-correct="идти">
+            <div class="emoji-display">👨‍👩‍👧</div>
+            <div class="drop-zone">
+                <span class="drop-zone-text">Hierhin</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Buttons -->
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="solveExercise()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    /* --- Drag & Drop Logik --- */
+    const draggables = document.querySelectorAll('.draggable');
+    const dropZones = document.querySelectorAll('.drop-zone');
+    const wordBank = document.getElementById('wordBank');
+    const taskCards = document.querySelectorAll('.task-card');
+
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', () => {
+            draggable.classList.add('dragging');
+        });
+        draggable.addEventListener('dragend', () => {
+            draggable.classList.remove('dragging');
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            const card = zone.closest('.task-card');
+            card.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            const card = zone.closest('.task-card');
+            card.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            const card = zone.closest('.task-card');
+            card.classList.remove('drag-over');
+            
+            const draggable = document.querySelector('.dragging');
+            if(!draggable) return;
+
+            // Wenn schon ein Wort da ist, zurück zur Bank
+            const existing = zone.querySelector('.draggable');
+            if(existing) {
+                wordBank.appendChild(existing);
+            }
+
+            zone.appendChild(draggable);
+            togglePlaceholder(zone, false);
+        });
+    });
+
+    // Zurück zur Bank droppen
+    wordBank.addEventListener('dragover', e => { e.preventDefault(); });
+    wordBank.addEventListener('drop', e => {
+        e.preventDefault();
+        const draggable = document.querySelector('.dragging');
+        if(!draggable) return;
+        wordBank.appendChild(draggable);
+        
+        // Platzhalter in den leeren Zonen wieder anzeigen
+        dropZones.forEach(zone => {
+            if(!zone.querySelector('.draggable')) togglePlaceholder(zone, true);
+        });
+    });
+
+    function togglePlaceholder(zone, show) {
+        const text = zone.querySelector('.drop-zone-text');
+        if(text) text.style.display = show ? 'block' : 'none';
+    }
+
+    /* --- Button Logik --- */
+
+    function checkAnswers() {
+        taskCards.forEach(card => {
+            const zone = card.querySelector('.drop-zone');
+            const word = zone.querySelector('.draggable');
+            const correctAnswer = card.dataset.correct;
+
+            // Vorherige Klassen entfernen
+            card.classList.remove('correct-zone', 'wrong-zone');
+            if(word) word.classList.remove('correct', 'wrong');
+
+            if (word) {
+                const userAnswer = word.dataset.verb;
+                if (userAnswer === correctAnswer) {
+                    card.classList.add('correct-zone');
+                    word.classList.add('correct');
+                } else {
+                    card.classList.add('wrong-zone');
+                    word.classList.add('wrong');
+                }
+            }
+        });
+    }
+
+    function resetExercise() {
+        // Alle Wörter zurück zur Bank
+        draggables.forEach(word => {
+            wordBank.appendChild(word);
+            word.classList.remove('correct', 'wrong');
+        });
+
+        // Styles entfernen
+        taskCards.forEach(card => {
+            card.classList.remove('correct-zone', 'wrong-zone');
+        });
+
+        // Platzhalter wieder an
+        dropZones.forEach(zone => togglePlaceholder(zone, true));
+        
+        // Mische die Wörter neu (optional, aber nett)
+        for (let i = wordBank.children.length; i >= 0; i--) {
+            wordBank.appendChild(wordBank.children[Math.random() * i | 0]);
+        }
+    }
+
+    function solveExercise() {
+        resetExercise();
+        
+        // Listen erstellen
+        const wordsIdti = Array.from(document.querySelectorAll('.draggable[data-verb="идти"]'));
+        const wordsEchat = Array.from(document.querySelectorAll('.draggable[data-verb="ехать"]'));
+        
+        taskCards.forEach(card => {
+            const zone = card.querySelector('.drop-zone');
+            const correctType = card.dataset.correct;
+            let wordToMove;
+
+            if (correctType === 'идти' && wordsIdti.length > 0) {
+                wordToMove = wordsIdti.pop();
+            } else if (correctType === 'ехать' && wordsEchat.length > 0) {
+                wordToMove = wordsEchat.pop();
+            }
+
+            if (wordToMove) {
+                zone.appendChild(wordToMove);
+                wordToMove.classList.add('correct');
+                card.classList.add('correct-zone');
+                togglePlaceholder(zone, false);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
