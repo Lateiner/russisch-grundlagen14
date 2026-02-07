@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Signalwörter (Gehen vs. Fahren)</title>
+    <style>
+        :root {
+            --primary: #2196F3;
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --success: #4caf50;
+            --success-bg: #e8f5e9;
+            --error: #f44336;
+            --error-bg: #ffebee;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 25px;
+        }
+
+        /* --- Grid Layout für die Fragen --- */
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .sentence {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Benutzerdefinierte Radio-Buttons für bessere Touch-Bedienung */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            border-color: #b3e5fc;
+            background-color: #f1f8e9;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--primary);
+        }
+
+        /* Feedback-Styles */
+        .question-card.correct {
+            border-color: var(--success);
+            background-color: var(--success-bg);
+        }
+
+        .question-card.correct .option-label.selected-correct {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .question-card.wrong {
+            border-color: var(--error);
+            background-color: var(--error-bg);
+        }
+
+        .question-card.wrong .option-label.selected-wrong {
+            background-color: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        /* Buttons am Ende */
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-check { background-color: var(--success); color: white; }
+        .btn-reset { background-color: #78909c; color: white; }
+        .btn-solve { background-color: #ff9800; color: white; }
+        
+        button:hover { opacity: 0.9; }
+
+        #result-message {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            min-height: 1.5em;
+        }
+
+        @media (max-width: 600px) {
+            .question-grid {
+                grid-template-columns: 1fr; /* Eine Spalte auf Mobile */
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Signalwörter: ид- oder ед-?</h1>
+        <div class="intro">
+            Achte auf das <strong>Signalwort</strong> im Satz.
+            <ul>
+                <li>Transportmittel (на автобусе, на метро...) = <strong>ехать</strong></li>
+                <li>Zu Fuß (пешком, langsam...) = <strong>идти</strong></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="question-grid" id="quiz-form">
+
+        <!-- Satz 1 -->
+        <div class="question-card" data-correct="едет">
+            <div class="sentence">1. Антон ... <span class="highlight">на метро</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q1" value="идет"> идет</label>
+                <label class="option-label"><input type="radio" name="q1" value="едет"> едет</label>
+            </div>
+        </div>
+
+        <!-- Satz 2 -->
+        <div class="question-card" data-correct="идем">
+            <div class="sentence">2. Мы ... в парк <span class="highlight">пешком</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q2" value="идем"> идем</label>
+                <label class="option-label"><input type="radio" name="q2" value="едем"> едем</label>
+            </div>
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="question-card" data-correct="едут">
+            <div class="sentence">3. Туристы ... <span class="highlight">на автобусе</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q3" value="идут"> идут</label>
+                <label class="option-label"><input type="radio" name="q3" value="едут"> едут</label>
+            </div>
+        </div>
+
+        <!-- Satz 4 -->
+        <div class="question-card" data-correct="едешь">
+            <div class="sentence">4. Ты ... <span class="highlight">на машине</span>?</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q4" value="идешь"> идешь</label>
+                <label class="option-label"><input type="radio" name="q4" value="едешь"> едешь</label>
+            </div>
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="question-card" data-correct="иду">
+            <div class="sentence">5. Я ... домой <span class="highlight">пешком</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q5" value="иду"> иду</label>
+                <label class="option-label"><input type="radio" name="q5" value="еду"> еду</label>
+            </div>
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="question-card" data-correct="едет">
+            <div class="sentence">6. Брат ... <span class="highlight">на велосипеде</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q6" value="идет"> идет</label>
+                <label class="option-label"><input type="radio" name="q6" value="едет"> едет</label>
+            </div>
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="question-card" data-correct="идут">
+            <div class="sentence">7. Дети ... в школу <span class="highlight">пешком</span>.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q7" value="идут"> идут</label>
+                <label class="option-label"><input type="radio" name="q7" value="едут"> едут</label>
+            </div>
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="question-card" data-correct="едем">
+            <div class="sentence">8. Мы ... <span class="highlight">на такси</span> в центр.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q8" value="идем"> идем</label>
+                <label class="option-label"><input type="radio" name="q8" value="едем"> едем</label>
+            </div>
+        </div>
+
+        <!-- Satz 9 -->
+        <div class="question-card" data-correct="идет">
+            <div class="sentence">9. Бабушка ... <span class="highlight">пешком</span> в магазин.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q9" value="идет"> идет</label>
+                <label class="option-label"><input type="radio" name="q9" value="едет"> едет</label>
+            </div>
+        </div>
+
+        <!-- Satz 10 -->
+        <div class="question-card" data-correct="едут">
+            <div class="sentence">10. Они ... <span class="highlight">на поезде</span> в Москву.</div>
+            <div class="options">
+                <label class="option-label"><input type="radio" name="q10" value="идут"> идут</label>
+                <label class="option-label"><input type="radio" name="q10" value="едут"> едут</label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetQuiz()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+
+    <div id="result-message"></div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const cards = document.querySelectorAll('.question-card');
+        let score = 0;
+        let answered = 0;
+
+        cards.forEach(card => {
+            const correctAnswer = card.dataset.correct;
+            const inputs = card.querySelectorAll('input[type="radio"]');
+            let selectedInput = null;
+
+            // Reset classes first
+            card.classList.remove('correct', 'wrong');
+            card.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected-correct', 'selected-wrong'));
+
+            inputs.forEach(input => {
+                if (input.checked) selectedInput = input;
+            });
+
+            if (selectedInput) {
+                answered++;
+                const parentLabel = selectedInput.parentElement;
+                
+                if (selectedInput.value === correctAnswer) {
+                    score++;
+                    card.classList.add('correct');
+                    parentLabel.classList.add('selected-correct');
+                } else {
+                    card.classList.add('wrong');
+                    parentLabel.classList.add('selected-wrong');
+                }
+            }
+        });
+
+        const resultDiv = document.getElementById('result-message');
+        if (answered < 10) {
+            resultDiv.textContent = "Bitte beantworte alle Fragen.";
+            resultDiv.style.color = "#f57c00";
+        } else {
+            resultDiv.textContent = `Du hast ${score} von 10 richtig!`;
+            resultDiv.style.color = score === 10 ? "var(--success)" : "var(--text)";
+        }
+    }
+
+    function resetQuiz() {
+        const cards = document.querySelectorAll('.question-card');
+        cards.forEach(card => {
+            card.classList.remove('correct', 'wrong');
+            const inputs = card.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => input.checked = false);
+            const labels = card.querySelectorAll('.option-label');
+            labels.forEach(l => l.classList.remove('selected-correct', 'selected-wrong'));
+        });
+        document.getElementById('result-message').textContent = "";
+    }
+
+    function showSolution() {
+        // Erst zurücksetzen, um Konflikte zu vermeiden
+        resetQuiz();
+
+        const cards = document.querySelectorAll('.question-card');
+        cards.forEach(card => {
+            const correctAnswer = card.dataset.correct;
+            const inputs = card.querySelectorAll('input[type="radio"]');
+            
+            inputs.forEach(input => {
+                if (input.value === correctAnswer) {
+                    input.checked = true;
+                    // Visuelles Feedback hinzufügen
+                    card.classList.add('correct');
+                    input.parentElement.classList.add('selected-correct');
+                }
+            });
+        });
+        document.getElementById('result-message').textContent = "Lösungen werden angezeigt.";
+        document.getElementById('result-message').style.color = "var(--primary)";
+    }
+</script>
+
+</body>
+</html>
