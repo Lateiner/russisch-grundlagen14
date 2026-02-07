@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Richtig oder Falsch? (12 Karten)</title>
+    <style>
+        :root {
+            --primary: #455a64; /* Dunkles Blau-Grau */
+            --bg: #eceff1;
+            --card-bg: #ffffff;
+            --text: #333;
+            --true-color: #4caf50; /* Grün */
+            --false-color: #f44336; /* Rot */
+            --selected-bg: #cfd8dc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px; /* Etwas breiter für 12 Karten */
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: var(--primary); margin: 0 0 10px 0; }
+        .instruction { color: #546e7a; font-size: 1.1rem; }
+
+        /* --- Grid Layout --- */
+        .quiz-grid {
+            display: grid;
+            /* Flexibles Grid: Passt sich automatisch an */
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Karte --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .emoji-img {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .sentence {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Auswahl Buttons (Toggle) --- */
+        .decision-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: #777;
+        }
+
+        .choice-btn:hover { background-color: #f5f5f5; border-color: #bbb; }
+
+        .choice-btn.selected {
+            border-color: var(--primary);
+            background-color: var(--selected-bg);
+            color: #000;
+            transform: scale(1.02);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- Feedback Styles --- */
+        .card.feedback-correct { border-color: var(--true-color); background-color: #e8f5e9; }
+        .card.feedback-wrong { border-color: var(--false-color); background-color: #ffebee; }
+
+        .card.feedback-correct .choice-btn.selected { background-color: var(--true-color); color: white; border-color: var(--true-color); }
+        .card.feedback-wrong .choice-btn.selected { background-color: var(--false-color); color: white; border-color: var(--false-color); }
+
+        .result-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            display: none;
+        }
+        .card.feedback-correct .result-icon.check { display: block; color: var(--true-color); }
+        .card.feedback-wrong .result-icon.cross { display: block; color: var(--false-color); }
+
+        /* --- Control Buttons --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .ctrl-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: opacity 0.2s;
+        }
+
+        .btn-check { background-color: var(--true-color); }
+        .btn-reset { background-color: #78909c; }
+        .btn-solve { background-color: #ff9800; }
+        .ctrl-btn:hover { opacity: 0.9; }
+
+        #score-display {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            height: 1.5em;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-grid { grid-template-columns: 1fr; }
+            .container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Richtig oder Falsch?</h1>
+        <p class="instruction">Passt der Satz zum Bild? <br>Achte auf <strong>идти</strong> (zu Fuß) vs. <strong>ехать</strong> (Fahrzeug).</p>
+    </header>
+
+    <div class="quiz-grid" id="grid">
+
+        <!-- 1. Auto - Falsch -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🚗</span>
+            <div class="sentence">Он идет на работу.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 2. Gehen - Richtig -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🚶‍♂️</span>
+            <div class="sentence">Он идет в парк.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 3. Bus - Richtig -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🚌</span>
+            <div class="sentence">Мы едем домой.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 4. Fahrrad - Falsch -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🚴</span>
+            <div class="sentence">Брат идет на стадион.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 5. U-Bahn - Richtig -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🚇</span>
+            <div class="sentence">Они едут на метро.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 6. Joggen - Richtig -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🏃‍♀️</span>
+            <div class="sentence">Я иду быстро.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 7. Zug - Falsch -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🚆</span>
+            <div class="sentence">Они идут в Москву.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 8. LKW - Richtig -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🚚</span>
+            <div class="sentence">Он едет на машине.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 9. Roller - Falsch -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🛴</span>
+            <div class="sentence">Ты идешь на самокате.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 10. Zu Fuß Gehen - Falsch -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🚶‍♀️</span>
+            <div class="sentence">Анна едет в школу.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 11. Taxi - Falsch (NEU) -->
+        <div class="card" data-is-correct="false">
+            <span class="emoji-img">🚕</span>
+            <div class="sentence">Мы идем на такси.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+        <!-- 12. Wandern - Richtig (NEU) -->
+        <div class="card" data-is-correct="true">
+            <span class="emoji-img">🎒</span>
+            <div class="sentence">Туристы идут в лес.</div>
+            <div class="result-icon check">✔</div>
+            <div class="result-icon cross">✘</div>
+            <div class="decision-btns">
+                <button class="choice-btn" onclick="selectOption(this, true)">Richtig</button>
+                <button class="choice-btn" onclick="selectOption(this, false)">Falsch</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="score-display"></div>
+
+    <div class="controls">
+        <button class="ctrl-btn btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="ctrl-btn btn-reset" onclick="resetQuiz()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveQuiz()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function selectOption(btn, choice) {
+        const card = btn.closest('.card');
+        const buttons = card.querySelectorAll('.choice-btn');
+        buttons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        card.setAttribute('data-user-choice', choice);
+        card.classList.remove('feedback-correct', 'feedback-wrong');
+    }
+
+    function checkAnswers() {
+        const cards = document.querySelectorAll('.card');
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        cards.forEach(card => {
+            const correctAnswer = card.getAttribute('data-is-correct') === 'true';
+            const userChoiceStr = card.getAttribute('data-user-choice');
+
+            if (userChoiceStr !== null && userChoiceStr !== undefined) {
+                answeredCount++;
+                const userChoice = userChoiceStr === 'true';
+
+                if (userChoice === correctAnswer) {
+                    card.classList.add('feedback-correct');
+                    card.classList.remove('feedback-wrong');
+                    correctCount++;
+                } else {
+                    card.classList.add('feedback-wrong');
+                    card.classList.remove('feedback-correct');
+                }
+            }
+        });
+
+        const scoreDisplay = document.getElementById('score-display');
+        if (answeredCount < cards.length) {
+            scoreDisplay.textContent = "Bitte entscheide dich bei allen Bildern!";
+            scoreDisplay.style.color = "#f57c00";
+        } else {
+            scoreDisplay.textContent = `Ergebnis: ${correctCount} von ${cards.length} richtig.`;
+            scoreDisplay.style.color = correctCount === cards.length ? "var(--true-color)" : "var(--text)";
+        }
+    }
+
+    function resetQuiz() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.classList.remove('feedback-correct', 'feedback-wrong');
+            card.removeAttribute('data-user-choice');
+            const buttons = card.querySelectorAll('.choice-btn');
+            buttons.forEach(b => b.classList.remove('selected'));
+        });
+        document.getElementById('score-display').textContent = "";
+    }
+
+    function solveQuiz() {
+        resetQuiz();
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const correctAnswer = card.getAttribute('data-is-correct') === 'true';
+            const buttons = card.querySelectorAll('.choice-btn');
+            
+            if (correctAnswer) {
+                buttons[0].classList.add('selected');
+                card.setAttribute('data-user-choice', 'true');
+            } else {
+                buttons[1].classList.add('selected');
+                card.setAttribute('data-user-choice', 'false');
+            }
+            card.classList.add('feedback-correct');
+        });
+        const scoreDisplay = document.getElementById('score-display');
+        scoreDisplay.textContent = "Lösung angezeigt.";
+        scoreDisplay.style.color = "#455a64";
+    }
+</script>
+
+</body>
+</html>
