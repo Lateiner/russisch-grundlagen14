@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Zeitstrahl (Aspekt & Zeit)</title>
+    <!-- Polyfill für Touch-Support auf Smartphones -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #3f51b5;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --start-color: #4caf50; /* Grün für Start */
+            --process-color: #ff9800; /* Orange für Prozess */
+            --end-color: #f44336; /* Rot für Ziel */
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
+        p.desc { color: #666; margin-top: 5px; }
+
+        /* --- Sticky Word Bank --- */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg);
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 4px 6px -6px rgba(0,0,0,0.1);
+        }
+
+        .word-bank {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            min-height: 50px;
+        }
+
+        .draggable {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 1rem;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+
+        /* Feedback Farben für Wörter */
+        .draggable.correct { border: 2px solid #fff; box-shadow: 0 0 0 2px var(--start-color); background-color: var(--start-color); }
+        .draggable.wrong { background-color: #607d8b; opacity: 0.7; }
+
+        /* --- Timeline Layout --- */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            gap: 20px;
+        }
+
+        /* Verbindungslinie (Desktop) */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 40px; /* Höhe der Kreise */
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: #dcdcdc;
+            z-index: 0;
+        }
+
+        .timeline-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Der Kreis mit dem Buchstaben */
+        .step-marker {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #999;
+            margin-bottom: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Farb-Themen für die Schritte */
+        .step-a .step-marker { border-color: var(--start-color); color: var(--start-color); }
+        .step-a .step-title { color: var(--start-color); }
+
+        .step-b .step-marker { border-color: var(--process-color); color: var(--process-color); }
+        .step-b .step-title { color: var(--process-color); }
+
+        .step-c .step-marker { border-color: var(--end-color); color: var(--end-color); }
+        .step-c .step-title { color: var(--end-color); }
+
+        /* Drop Zones */
+        .drop-zone {
+            width: 100%;
+            min-height: 150px;
+            background: #fff;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #e3f2fd;
+            border-color: var(--primary);
+        }
+
+        /* --- Buttons --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            transition: opacity 0.2s;
+        }
+
+        .btn-check { background-color: var(--start-color); }
+        .btn-reset { background-color: #78909c; }
+        .btn-solve { background-color: var(--process-color); }
+        
+        button:hover { opacity: 0.9; }
+
+        /* --- Responsives Design (Mobile) --- */
+        @media (max-width: 800px) {
+            .timeline {
+                flex-direction: column; /* Vertikal statt Horizontal */
+                gap: 0;
+            }
+
+            /* Verbindungslinie vertikal */
+            .timeline::before {
+                top: 40px;
+                bottom: 40px;
+                left: 40px; /* Mittig durch die Marker */
+                right: auto;
+                width: 4px;
+                height: auto;
+            }
+
+            .timeline-step {
+                flex-direction: row; /* Marker links, Content rechts */
+                align-items: flex-start;
+                margin-bottom: 30px;
+                gap: 20px;
+            }
+
+            .step-marker {
+                flex-shrink: 0; /* Marker bleibt rund */
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .step-content-wrapper {
+                flex-grow: 1;
+                width: 100%;
+            }
+
+            .step-title, .step-desc {
+                text-align: left;
+            }
+            
+            .container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Timeline: по- vs. (kein) vs. при-</h1>
+        <p class="desc">Ordne die 12 Verben (Gehen & Fahren) den Punkten auf dem Zeitstrahl zu.</p>
+    </header>
+
+    <!-- Sticky Word Bank -->
+    <div class="sticky-wrapper">
+        <div class="word-bank" id="wordBank">
+            <!-- Gruppe A: Start (по-) -->
+            <div class="draggable" draggable="true" data-type="start">пошёл</div>
+            <div class="draggable" draggable="true" data-type="start">поехала</div>
+            <div class="draggable" draggable="true" data-type="start">пошла</div>
+            <div class="draggable" draggable="true" data-type="start">поехал</div>
+
+            <!-- Gruppe B: Prozess (kein Präfix) -->
+            <div class="draggable" draggable="true" data-type="process">ехал</div>
+            <div class="draggable" draggable="true" data-type="process">шла</div>
+            <div class="draggable" draggable="true" data-type="process">еxала</div>
+            <div class="draggable" draggable="true" data-type="process">шёл</div>
+
+            <!-- Gruppe C: Ergebnis (при-) -->
+            <div class="draggable" draggable="true" data-type="result">пришла</div>
+            <div class="draggable" draggable="true" data-type="result">приехал</div>
+            <div class="draggable" draggable="true" data-type="result">пришёл</div>
+            <div class="draggable" draggable="true" data-type="result">приехала</div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+        
+        <!-- Step A -->
+        <div class="timeline-step step-a">
+            <div class="step-marker">A</div>
+            <div class="step-content-wrapper">
+                <div class="step-title">Start / Aufbruch</div>
+                <div class="step-desc">Die Handlung beginnt. (Präfix по-)</div>
+                <div class="drop-zone" data-accept="start"></div>
+            </div>
+        </div>
+
+        <!-- Step B -->
+        <div class="timeline-step step-b">
+            <div class="step-marker">B</div>
+            <div class="step-content-wrapper">
+                <div class="step-title">Prozess / Unterwegs</div>
+                <div class="step-desc">Die Handlung dauert an. (Kein Präfix)</div>
+                <div class="drop-zone" data-accept="process"></div>
+            </div>
+        </div>
+
+        <!-- Step C -->
+        <div class="timeline-step step-c">
+            <div class="step-marker">C</div>
+            <div class="step-content-wrapper">
+                <div class="step-title">Ergebnis / Ankunft</div>
+                <div class="step-desc">Die Handlung ist abgeschlossen. (Präfix при-)</div>
+                <div class="drop-zone" data-accept="result"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkTimeline()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetTimeline()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="solveTimeline()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    const draggables = document.querySelectorAll('.draggable');
+    const dropZones = document.querySelectorAll('.drop-zone');
+    const wordBank = document.getElementById('wordBank');
+
+    // Drag & Drop Setup
+    draggables.forEach(draggable => {
+        draggable.addEventListener('dragstart', () => {
+            draggable.classList.add('dragging');
+        });
+        draggable.addEventListener('dragend', () => {
+            draggable.classList.remove('dragging');
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', e => {
+            e.preventDefault();
+            zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const draggable = document.querySelector('.dragging');
+            if(draggable) {
+                zone.appendChild(draggable);
+            }
+        });
+    });
+
+    // Zurück zur Wort-Bank droppen
+    wordBank.addEventListener('dragover', e => { e.preventDefault(); });
+    wordBank.addEventListener('drop', e => {
+        e.preventDefault();
+        const draggable = document.querySelector('.dragging');
+        if(draggable) wordBank.appendChild(draggable);
+    });
+
+    // Funktionen
+    function checkTimeline() {
+        dropZones.forEach(zone => {
+            const acceptedType = zone.dataset.accept;
+            const words = zone.querySelectorAll('.draggable');
+            
+            words.forEach(word => {
+                if(word.dataset.type === acceptedType) {
+                    word.classList.add('correct');
+                    word.classList.remove('wrong');
+                    // Style für Korrekt
+                    word.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--start-color');
+                } else {
+                    word.classList.add('wrong');
+                    word.classList.remove('correct');
+                    // Style für Falsch
+                    word.style.backgroundColor = '#f44336';
+                }
+            });
+        });
+    }
+
+    function resetTimeline() {
+        draggables.forEach(word => {
+            wordBank.appendChild(word);
+            word.classList.remove('correct', 'wrong');
+            word.style.backgroundColor = ''; // Reset inline style
+        });
+        
+        // Mische die Wörter neu
+        for (let i = wordBank.children.length; i >= 0; i--) {
+            wordBank.appendChild(wordBank.children[Math.random() * i | 0]);
+        }
+    }
+
+    function solveTimeline() {
+        resetTimeline();
+        
+        // Arrays erstellen
+        const starts = Array.from(document.querySelectorAll('.draggable[data-type="start"]'));
+        const processes = Array.from(document.querySelectorAll('.draggable[data-type="process"]'));
+        const results = Array.from(document.querySelectorAll('.draggable[data-type="result"]'));
+        
+        const zoneA = document.querySelector('.drop-zone[data-accept="start"]');
+        const zoneB = document.querySelector('.drop-zone[data-accept="process"]');
+        const zoneC = document.querySelector('.drop-zone[data-accept="result"]');
+
+        starts.forEach(w => { zoneA.appendChild(w); w.classList.add('correct'); w.style.backgroundColor = '#4caf50'; });
+        processes.forEach(w => { zoneB.appendChild(w); w.classList.add('correct'); w.style.backgroundColor = '#4caf50'; });
+        results.forEach(w => { zoneC.appendChild(w); w.classList.add('correct'); w.style.backgroundColor = '#4caf50'; });
+    }
+</script>
+
+</body>
+</html>
