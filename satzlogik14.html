@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Satz-Logik (Präfixe)</title>
+    <style>
+        :root {
+            --primary: #009688; /* Teal Farbe */
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #37474f;
+            --success: #4caf50;
+            --error: #f44336;
+            --hint-bg: #eceff1;
+            --hint-text: #607d8b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 10px; }
+        
+        .intro-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        /* --- Aufgaben-Karten --- */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .context-hint {
+            font-size: 0.85rem;
+            color: var(--hint-text);
+            background-color: var(--hint-bg);
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .sentence {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        select {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #cfd8dc;
+            border-radius: 6px;
+            background-color: #fff;
+            cursor: pointer;
+            outline: none;
+            color: var(--primary);
+            font-weight: bold;
+            max-width: 100%;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Feedback Styles */
+        .task-card.correct select {
+            border-color: var(--success);
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .task-card.wrong select {
+            border-color: var(--error);
+            background-color: #ffebee;
+            color: var(--error);
+        }
+
+        .feedback-icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 1.5rem;
+            display: none;
+        }
+
+        .task-card.correct .feedback-icon.check { display: block; color: var(--success); }
+        .task-card.wrong .feedback-icon.cross { display: block; color: var(--error); }
+
+        /* --- Buttons --- */
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #78909c; }
+        .btn-solve { background-color: #ffa726; }
+        
+        button:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .sentence { font-size: 1.1rem; }
+            select { width: 100%; margin-top: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Logik: Kontext & Präfixe</h1>
+        <div class="intro-text">
+            <p>Lies den Satz genau. Entscheide anhand des Kontextes:</p>
+            <ul style="margin:0; padding-left:20px;">
+                <li>Ist die Person <strong>nicht hier / weg</strong>? -> Start (<strong>по-</strong>)</li>
+                <li>Ist die Person <strong>schon da</strong>? -> Ergebnis (<strong>при-</strong>)</li>
+                <li>Dauert die Handlung an? -> Prozess (kein Präfix)</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="task-list">
+
+        <!-- Satz 1 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Anton ist nicht zu Hause (er ist weggegangen).</div>
+            <div class="sentence">
+                Антона нет дома. Он 
+                <select data-correct="пошёл">
+                    <option value="">...</option>
+                    <option value="шёл">шёл</option>
+                    <option value="пошёл">пошёл</option>
+                    <option value="пришёл">пришёл</option>
+                </select>
+                в магазин.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 2 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Anna ist jetzt hier (Resultat).</div>
+            <div class="sentence">
+                О, привет! Хорошо, что ты уже 
+                <select data-correct="пришла">
+                    <option value="">...</option>
+                    <option value="шла">шла</option>
+                    <option value="пошла">пошла</option>
+                    <option value="пришла">пришла</option>
+                </select>.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Während wir unterwegs waren (Prozess/Dauer).</div>
+            <div class="sentence">
+                Когда мы 
+                <select data-correct="шли">
+                    <option value="">...</option>
+                    <option value="шли">шли</option>
+                    <option value="пошли">пошли</option>
+                    <option value="пришли">пришли</option>
+                </select>
+                в парк, мы видели собаку.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 4 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Der Zug steht am Bahnhof (Resultat).</div>
+            <div class="sentence">
+                Поезд уже на вокзале. Он 
+                <select data-correct="приехал">
+                    <option value="">...</option>
+                    <option value="ехал">ехал</option>
+                    <option value="поехал">поехал</option>
+                    <option value="приехал">приехал</option>
+                </select>
+                вовремя.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Zukunftsplan / Start einer Reise.</div>
+            <div class="sentence">
+                Завтра утром мы 
+                <select data-correct="поедем">
+                    <option value="">...</option>
+                    <option value="едем">едем</option>
+                    <option value="поедем">поедем</option>
+                    <option value="приедем">приедем</option>
+                </select>
+                в Берлин.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Er ist noch nicht da (Negatives Resultat).</div>
+            <div class="sentence">
+                Где Иван? Он ещё не 
+                <select data-correct="пришёл">
+                    <option value="">...</option>
+                    <option value="шёл">шёл</option>
+                    <option value="пошёл">пошёл</option>
+                    <option value="пришёл">пришёл</option>
+                </select>?
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Start der Handlung (Plötzlich begann es zu regnen, also...).</div>
+            <div class="sentence">
+                Начал идти дождь, и мы быстро 
+                <select data-correct="пошли">
+                    <option value="">...</option>
+                    <option value="шли">шли</option>
+                    <option value="пошли">пошли</option>
+                    <option value="пришли">пришли</option>
+                </select>
+                домой.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Imperativ / Aufforderung zum Starten.</div>
+            <div class="sentence">
+                Садись в машину! 
+                <select data-correct="Поехали">
+                    <option value="">...</option>
+                    <option value="Ехали">Ехали</option>
+                    <option value="Поехали">Поехали</option>
+                    <option value="Приехали">Приехали</option>
+                </select>!
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 9 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Er war am Fahren (Prozess), als ich anrief.</div>
+            <div class="sentence">
+                Я звонил ему, но он не ответил, потому что 
+                <select data-correct="ехал">
+                    <option value="">...</option>
+                    <option value="ехал">ехал</option>
+                    <option value="поехал">поехал</option>
+                    <option value="приехал">приехал</option>
+                </select>
+                за рулём.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+        <!-- Satz 10 -->
+        <div class="task-card">
+            <div class="context-hint">Kontext: Sie ist nicht mehr hier (Weggang).</div>
+            <div class="sentence">
+                Маши уже нет. Она 
+                <select data-correct="пошла">
+                    <option value="">...</option>
+                    <option value="шла">шла</option>
+                    <option value="пошла">пошла</option>
+                    <option value="пришла">пришла</option>
+                </select>
+                в школу.
+            </div>
+            <span class="feedback-icon check">✔</span>
+            <span class="feedback-icon cross">✘</span>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetTask()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="solveTask()">Lösung anzeigen</button>
+    </div>
+
+</div>
+
+<script>
+    function checkAnswers() {
+        const cards = document.querySelectorAll('.task-card');
+        
+        cards.forEach(card => {
+            const select = card.querySelector('select');
+            const userAnswer = select.value;
+            const correctAnswer = select.getAttribute('data-correct');
+            
+            // Reset classes
+            card.classList.remove('correct', 'wrong');
+            
+            if (userAnswer === "") {
+                // Keine Antwort gewählt -> Neutral lassen oder als falsch markieren (hier neutral)
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                card.classList.add('correct');
+            } else {
+                card.classList.add('wrong');
+            }
+        });
+    }
+
+    function resetTask() {
+        const cards = document.querySelectorAll('.task-card');
+        cards.forEach(card => {
+            card.classList.remove('correct', 'wrong');
+            card.querySelector('select').value = "";
+        });
+    }
+
+    function solveTask() {
+        const cards = document.querySelectorAll('.task-card');
+        cards.forEach(card => {
+            const select = card.querySelector('select');
+            select.value = select.getAttribute('data-correct');
+            // Optional: Visuelles Feedback entfernen oder auf "Richtig" setzen
+            card.classList.remove('wrong');
+            card.classList.add('correct');
+        });
+    }
+</script>
+
+</body>
+</html>
